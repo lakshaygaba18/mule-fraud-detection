@@ -29,6 +29,11 @@ public class FraudController {
         return report;
     }
 
+    @GetMapping("/api/network")
+public Map<String, Object> getNetwork() {
+    return fraudMlClient.getNetwork();
+}
+
     @GetMapping("/api/audit-log")
     public List<AuditLogEntry> getAuditLog() {
         return auditLogService.getAllEntries();

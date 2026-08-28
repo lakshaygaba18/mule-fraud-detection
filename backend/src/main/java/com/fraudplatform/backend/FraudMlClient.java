@@ -11,7 +11,9 @@ public class FraudMlClient {
 
     private final RestClient restClient;
 
-    public FraudMlClient(@Value("${ml.service.url}") String mlServiceUrl) {
+    public FraudMlClient(
+            @Value("${ml.service.url}") String mlServiceUrl) {
+
         this.restClient = RestClient.builder()
                 .baseUrl(mlServiceUrl)
                 .build();
@@ -27,6 +29,13 @@ public class FraudMlClient {
     public Map<String, Object> getDriftReport() {
         return restClient.get()
                 .uri("/drift-report")
+                .retrieve()
+                .body(Map.class);
+    }
+
+    public Map<String, Object> getNetwork() {
+        return restClient.get()
+                .uri("/network")
                 .retrieve()
                 .body(Map.class);
     }
