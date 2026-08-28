@@ -4,6 +4,7 @@ import '../models/drift_report.dart';
 import '../services/fraud_api_service.dart';
 import '../widgets/drift_alert_banner.dart';
 import 'account_detail_screen.dart';
+import 'network_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -41,11 +42,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Fraud Intelligence Dashboard'),
-        actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _refresh),
-        ],
-      ),
+  title: const Text('Fraud Intelligence Dashboard'),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.account_tree),
+      tooltip: 'Transaction Network',
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const NetworkScreen(),
+          ),
+        );
+      },
+    ),
+    IconButton(
+      icon: const Icon(Icons.refresh),
+      onPressed: _refresh,
+    ),
+  ],
+),
       body: FutureBuilder<FraudReport>(
         future: _reportFuture,
         builder: (context, snapshot) {
@@ -165,7 +181,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

@@ -25,7 +25,7 @@ class AccountDetailScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    '${account.riskScore.toStringAsFixed(1)}',
+                    account.riskScore.toStringAsFixed(1),
                     style: TextStyle(
                       fontSize: 56,
                       fontWeight: FontWeight.bold,
@@ -57,8 +57,8 @@ class AccountDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: account.isActuallyFraud
-                    ? Colors.red.withOpacity(0.1)
-                    : Colors.green.withOpacity(0.1),
+                    ? Colors.red.withValues(alpha:0.1)
+                    : Colors.green.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

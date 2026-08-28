@@ -110,9 +110,9 @@ class DriftAlertBanner extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _color.withOpacity(0.1),
+          color: _color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _color.withOpacity(0.4)),
+          border: Border.all(color: _color.withValues(alpha: 0.4)),
         ),
         child: Row(
           children: [
