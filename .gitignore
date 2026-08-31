@@ -1,13 +1,28 @@
-# Python virtual environment
-venv/
-.venv/
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
-
-# Environment / secrets
+.venv/
+venv/
 .env
+
+# Flutter
+frontend/.dart_tool/
+frontend/build/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+
+# Java / Maven
+backend/target/
+
+# Generated datasets / reports
+combined_account_features.csv
+combined_transactions.csv
+account_risk_report_propagated.csv
+adversarial_account_risk_report_v2.csv
+
+# Local model artifacts
+gnn_model_v2.pt
 
 # IDE
 .vscode/
@@ -16,6 +31,3 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
