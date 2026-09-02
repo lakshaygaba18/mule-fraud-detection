@@ -568,11 +568,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
         Icons.person_search_rounded,
       ),
       (
-        'STRUCT',
-        'Structured',
-        Icons.account_tree_rounded,
-      ),
-      (
         'OUT',
         'Outbound',
         Icons.call_made_rounded,
