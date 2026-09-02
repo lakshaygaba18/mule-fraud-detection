@@ -1,4 +1,4 @@
-FROM ghcr.io/cirruslabs/flutter:stable AS build
+FROM ghcr.io/adrianjagielak/flutter:3.47.2 AS build
 
 WORKDIR /app
 
