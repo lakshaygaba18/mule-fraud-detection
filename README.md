@@ -359,28 +359,35 @@ The ML service and Spring Boot backend are deployed as independent services (Ren
 
 ---
 
-## 📸 Screenshots
+## 📸 Platform Screenshots
 
-**Fraud Intelligence Dashboard** — live drift alert banner, account list sorted by risk score, with plain-language reasons for every flag.
+<table>
+  <tr>
+    <td align="center">
+      <img src="./assets/screenshots/dashboard.png" alt="Fraud Intelligence Dashboard" width="500"/>
+    </td>
+    <td align="center">
+      <img src="./assets/screenshots/network.png" alt="Transaction Network Graph" width="500"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>Fraud Intelligence Dashboard</b></td>
+    <td align="center"><b>Transaction Network Intelligence</b></td>
+  </tr>
 
-![Dashboard](<img width="959" height="475" alt="dashboard" src="https://github.com/user-attachments/assets/64bceaa8-be2a-43b1-9446-6f027f8ca872" />
-)
-
-**Transaction Network Graph** — interactive, filterable (All / High Risk / Mule / Outbound) live topology of the account graph.
-
-![Network Graph](<img width="959" height="477" alt="network" src="https://github.com/user-attachments/assets/ed96f904-c8d8-4f2d-a3ef-da2b6b4f6fbc" />
-)
-
-**Account Investigation Panel** — click any node to see its risk score, account type, transaction volumes, and network connections.
-
-![Account Investigation](<img width="959" height="477" alt="network" src="https://github.com/user-attachments/assets/640ae973-c3ec-4321-b10e-2b7fdc29139b" />
-)
-
-**Drift Monitoring Report** — per-feature PSI breakdown, showing `is_passthrough` catching a shift that the aggregate risk-score PSI missed.
-
-![Drift Report](<img width="959" height="477" alt="network" src="https://github.com/user-attachments/assets/80356841-3f7a-43b5-b989-6165c0ac2aca" />
-)
-
+  <tr>
+    <td align="center">
+      <img src="./assets/screenshots/account.png" alt="Account Investigation Panel" width="500"/>
+    </td>
+    <td align="center">
+      <img src="./assets/screenshots/drift.png" alt="Drift Monitoring Report" width="500"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>Account Investigation</b></td>
+    <td align="center"><b>Model Drift Monitoring</b></td>
+  </tr>
+</table>
 ---
 
 ## 🚀 Future Improvements
