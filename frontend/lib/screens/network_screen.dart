@@ -291,9 +291,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
         case 'MULE':
           return type == 'MULE';
 
-        case 'STRUCT':
-          return type == 'STRUCTURED';
-
         case 'OUT':
           return type == 'OUTBOUND';
 
@@ -306,10 +303,33 @@ class _NetworkScreenState extends State<NetworkScreen> {
         .map((node) => node.id)
         .toSet();
 
-    final filteredEdges = edges.where((edge) {
-      return allowedIds.contains(edge.source) &&
+    // Show edges where EITHER side is a filtered account (not just both) --
+    // otherwise mule/outbound accounts show zero connections, since they
+    // mainly transact with senders/receivers, not with each other.
+    final relevantEdges = edges.where((edge) {
+      return allowedIds.contains(edge.source) ||
           allowedIds.contains(edge.target);
     }).toList();
+
+    final contextIds = <String>{};
+    for (final edge in relevantEdges) {
+      contextIds.add(edge.source);
+      contextIds.add(edge.target);
+    }
+
+    final nodeById = {
+      for (final node in nodes) node.id: node,
+    };
+
+    final displayNodes = [
+      ...filteredNodes,
+      ...contextIds
+          .difference(allowedIds)
+          .map((id) => nodeById[id])
+          .whereType<NetworkNode>(),
+    ];
+
+    final filteredEdges = relevantEdges;
 
     final highRiskCount = nodes
         .where(
@@ -358,7 +378,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               children: [
                 Expanded(
                   child: _buildGraph(
-                    filteredNodes,
+                    displayNodes,
                     filteredEdges,
                   ),
                 ),
@@ -1414,7 +1434,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   ),
 
                   valueColor:
-                      AlwaysStoppedAnimation<
+                      AlwaysStoppedAnimation
                           Color>(
                     color,
                   ),
