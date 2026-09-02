@@ -13,9 +13,9 @@ The goal isn't just to predict whether an account is fraudulent — it's to show
 
 | Component | Link |
 |---|---|
-| 🌐 Frontend (Flutter Web dashboard) | *[add your deployed frontend URL here]* |
+| 🌐 Frontend (Flutter Web dashboard) | https://mule-fraud-frontend.onrender.com |
 | 🤖 ML Service (FastAPI) | https://mule-fraud-ml.onrender.com |
-| ☕ Backend (Spring Boot API) | *[add your deployed backend URL here]* |
+| ☕ Backend (Spring Boot API) | https://mule-fraud-backend.onrender.com |
 | 💻 Source Code | https://github.com/lakshaygaba18/mule-fraud-detection |
 
 ML service health check:
@@ -361,13 +361,21 @@ The ML service and Spring Boot backend are deployed as independent services (Ren
 
 ## 📸 Screenshots
 
-*(add 2-3 screenshots here before sharing — dashboard overview, account detail view, and the network graph make the strongest first impression)*
+**Fraud Intelligence Dashboard** — live drift alert banner, account list sorted by risk score, with plain-language reasons for every flag.
 
-```
 ![Dashboard](docs/screenshots/dashboard.png)
+
+**Transaction Network Graph** — interactive, filterable (All / High Risk / Mule / Outbound) live topology of the account graph.
+
 ![Network Graph](docs/screenshots/network.png)
-![Account Investigation](docs/screenshots/account-detail.png)
-```
+
+**Account Investigation Panel** — click any node to see its risk score, account type, transaction volumes, and network connections.
+
+![Account Investigation](docs/screenshots/account-investigation.png)
+
+**Drift Monitoring Report** — per-feature PSI breakdown, showing `is_passthrough` catching a shift that the aggregate risk-score PSI missed.
+
+![Drift Report](docs/screenshots/drift-report.png)
 
 ---
 
