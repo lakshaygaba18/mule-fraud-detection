@@ -1387,109 +1387,61 @@ class _NetworkScreenState extends State<NetworkScreen> {
   // RISK CARD
   // ============================================================
 
-  Widget _riskScoreCard(
-    double score,
-    String risk,
-    Color color,
-  ) {
-    final double progress =
-        (score / 100).clamp(0.0, 1.0);
+    Widget _riskScoreCard(double score, String risk, Color color) {
+    final double progress = (score / 100).clamp(0.0, 1.0);
 
     return Container(
       padding: const EdgeInsets.all(14),
-
       decoration: BoxDecoration(
-        color: color.withValues(
-          alpha: 0.07,
-        ),
-
-        borderRadius:
-            BorderRadius.circular(12),
-
-        border: Border.all(
-          color: color.withValues(
-            alpha: 0.20,
-          ),
-        ),
+        color: color.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.20)),
       ),
-
       child: Row(
         children: [
           SizedBox(
             width: 54,
             height: 54,
-
             child: Stack(
               alignment: Alignment.center,
-
               children: [
                 CircularProgressIndicator(
                   value: progress,
-
                   strokeWidth: 5,
-
-                  backgroundColor:
-                      const Color(
-                    0xFF26324A,
-                  ),
-
-                  valueColor:
-                      AlwaysStoppedAnimation
-                          Color>(
-                    color,
-                  ),
+                  backgroundColor: const Color(0xFF26324A),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
-
                 Text(
                   score.toStringAsFixed(0),
-
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,
-                    fontWeight:
-                        FontWeight.w800,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
             ),
           ),
-
           const SizedBox(width: 14),
-
           Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
-
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'ML RISK SCORE',
-
                 style: TextStyle(
-                  color:
-                      Color(0xFF748198),
-
+                  color: Color(0xFF748198),
                   fontSize: 9,
-
-                  fontWeight:
-                      FontWeight.w700,
-
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
                 ),
               ),
-
               const SizedBox(height: 5),
-
               Text(
                 risk,
-
                 style: TextStyle(
                   color: color,
-
                   fontSize: 17,
-
-                  fontWeight:
-                      FontWeight.w800,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
@@ -1879,7 +1831,7 @@ class _GridPainter
     }
   }
 
-  @override
+  @overrid
   bool shouldRepaint(
     covariant CustomPainter oldDelegate,
   ) {
