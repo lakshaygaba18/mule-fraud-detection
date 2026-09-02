@@ -8,9 +8,9 @@ import '../models/network_graph.dart';
 class FraudApiService {
   // Local development backend
   static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:8080',
-  );
+  'API_BASE_URL',
+  defaultValue: 'https://mule-fraud-backend.onrender.com',
+);
 
   Future<FraudReport> fetchFraudReport() async {
     final response = await http.get(
