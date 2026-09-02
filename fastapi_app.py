@@ -12,7 +12,7 @@ BASELINE_FEATURES_FILE = "account_features.csv"
 BASELINE_SCORES_FILE = "account_risk_report.csv"
 CURRENT_FEATURES_FILE = "drift_account_features.csv"
 CURRENT_SCORES_FILE = "drift_account_risk_report.csv"
-TRANSACTIONS_FILE = "drift_transactions.csv"
+TRANSACTIONS_FILE = "transactions.csv"
 
 FEATURE_COLS = [
     "in_degree",
