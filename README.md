@@ -1,35 +1,26 @@
 # 🛡️ MuleShield
-
 ### AI-Powered Mule Fraud Detection & Transaction Network Intelligence
 
-> **Detect suspicious accounts. Trace the network. Explain the risk. Monitor when fraud behavior changes.**
+*Detect suspicious accounts. Trace the network. Explain the risk. Monitor when fraud behavior changes — and prove that fixing it actually works.*
 
-MuleShield is an end-to-end fraud intelligence platform designed to identify suspicious mule accounts by combining **GraphSAGE-based graph learning, transaction-network analysis, behavioral explainability, risk propagation, adversarial robustness testing, and model-drift monitoring** into an investigator-oriented dashboard.
+MuleShield is an end-to-end fraud intelligence platform that identifies suspicious mule accounts by combining **GraphSAGE-based graph learning**, **transaction-network analysis**, **behavioral explainability**, **model-drift monitoring**, and **adversarial robustness testing** into an investigator-oriented dashboard.
 
-The goal is not simply to predict whether an account is fraudulent, but to provide investigators with the **context behind the prediction** and the surrounding transaction network.
+The goal isn't just to predict whether an account is fraudulent — it's to show investigators *why*, show them the surrounding network, and prove the system knows when its own judgment is starting to go stale.
 
 ---
 
 ## 🚀 Quick Links
 
-| Component | Details |
+| Component | Link |
 |---|---|
-| 🌐 Frontend | Flutter Web investigation dashboard |
-| 🤖 ML Service | `https://mule-fraud-ml.onrender.com` |
-| ☕ Backend | Spring Boot REST API |
-| 💻 Source Code | `https://github.com/lakshaygaba18/mule-fraud-detection` |
+| 🌐 Frontend (Flutter Web dashboard) | *[add your deployed frontend URL here]* |
+| 🤖 ML Service (FastAPI) | https://mule-fraud-ml.onrender.com |
+| ☕ Backend (Spring Boot API) | *[add your deployed backend URL here]* |
+| 💻 Source Code | https://github.com/lakshaygaba18/mule-fraud-detection |
 
-### ML Service Health
-
-The production ML service exposes:
-
-```text
-https://mule-fraud-ml.onrender.com
-```
-
-Example response:
-
+ML service health check:
 ```json
+GET https://mule-fraud-ml.onrender.com
 {
   "service": "Fraud Detection ML Service",
   "status": "running",
@@ -39,13 +30,28 @@ Example response:
 
 ---
 
-# 🎯 Problem Statement
+## 📊 Results & Key Findings
 
-Traditional fraud detection systems often evaluate transactions or accounts independently.
+This is the core evidence for why this system is more than a classifier — it's a system that catches its own blind spots and recovers from them.
 
-Mule accounts, however, frequently operate as part of a **transaction network**.
+| Scenario | What happened | Result |
+|---|---|---|
+| **New fraud pattern appears** ("structuring" — money spread across many small, slow transfers instead of a fast mule-ring pile-up) | Model recall dropped silently, but the **aggregate risk-score distribution stayed "stable"** (PSI = 0.045) | Score-based drift monitoring alone **missed** the problem |
+| **Topology-level monitoring added** (`is_passthrough` — flags pass-through chain accounts) | Same structuring batch re-checked at the feature level | **Caught immediately** (PSI = 0.583, `MAJOR_SHIFT`) — before any labeled data confirmed the recall drop |
+| **Adversarial red-team test** — a fraud pattern deliberately engineered to evade the `is_passthrough` check (each account splits its outbound transfer in two) | Original model (v1) recall on this **genuinely unseen** pattern | **67.1%** |
+| **Retrain loop closes** — model retrained on baseline + structuring data (never shown the adversarial pattern) | v2 model tested on the same unseen adversarial batch | **100% recall** — up from 67.1%, with zero exposure to that exact pattern during training |
 
-```text
+**Why this matters:** most student/portfolio fraud projects stop at "here's my model's accuracy." MuleShield instead demonstrates the full lifecycle a real fraud team cares about — *detect → notice you're wrong → fix it → prove the fix generalizes* — with real numbers at every step, including an honest account of where the first-line defense (score drift) failed and a second layer (topology drift) had to catch it.
+
+*(v2 was deliberately **not** hot-swapped into production without a full validation/rollout process — a real MLOps discipline point, not an oversight.)*
+
+---
+
+## 🎯 Problem Statement
+
+Traditional fraud detection systems often evaluate transactions or accounts independently. Mule accounts, however, frequently operate as part of a transaction network:
+
+```
 Account A
     │
     ▼
@@ -56,188 +62,91 @@ Mule Account
     └──────────► Account D
 ```
 
-A suspicious account may therefore be difficult to identify using only individual transaction features.
+An account that receives money from many senders, quickly forwards it, has a high pass-through ratio, and acts as a bridge between other suspicious accounts is often only recognizable when viewed as part of a network — not as an isolated transaction.
 
-For example, an account that:
-
-- receives money from many accounts,
-- quickly forwards the money,
-- has a high pass-through ratio,
-- participates in multiple transaction paths,
-- or acts as a bridge between suspicious accounts
-
-may be more meaningful when viewed as part of a network.
-
-MuleShield combines **account-level behavioral features with graph-based learning and network intelligence** to provide a broader view of suspicious financial activity.
+MuleShield combines account-level behavioral features with graph-based learning and network intelligence to provide that broader view.
 
 ---
 
-# 💡 Core Idea
+## 💡 Core Idea
 
-A traditional system may answer:
+A traditional system answers: **"Is this account suspicious?"**
 
-> **"Is this account suspicious?"**
+MuleShield answers: **"Why is this account suspicious, who is it connected to, how is money moving through the network, and has the underlying behavior changed since the model was trained?"**
 
-MuleShield attempts to answer:
-
-> **"Why is this account suspicious, who is it connected to, how is money moving through the network, and has the underlying behavior changed?"**
-
-The platform therefore combines:
-
-```text
-Fraud Detection
-      +
-Network Intelligence
-      +
-Explainability
-      +
-Risk Propagation
-      +
-Adversarial Testing
-      +
-Drift Monitoring
-      +
-Audit Logging
+```
+Fraud Detection + Network Intelligence + Explainability
+     + Risk Propagation + Adversarial Testing + Drift Monitoring
 ```
 
 ---
 
-# ✨ Key Features
+## ✨ Key Features
 
 - 🧠 Graph Neural Network fraud detection using **GraphSAGE**
-- 🔗 Transaction-network visualization
-- 🚨 Account-level risk scoring
-- 🕵️ Mule / structured / outbound account identification
-- 🔍 Explainable behavioral risk reasons
-- 📈 Feature and model-drift monitoring using **PSI**
-- 🧪 Adversarial fraud simulation and robustness testing
-- 🔄 Network-based risk propagation
+- 🔗 Interactive transaction-network visualization
+- 🚨 Account-level risk scoring with an explicit **uncertain / escalate-to-human-review** band (not just binary allow/block)
+- 🕵️ Mule / structured / outbound account type identification
+- 🔍 Explainable, plain-language behavioral risk reasons
+- 📈 Feature- and model-drift monitoring using **PSI** and **Jensen-Shannon divergence**
+- 🧪 Adversarial fraud simulation to red-team the system's own detectors
+- 🔄 Retrain loop with **before/after validation on a genuinely unseen pattern**
+- 🌐 Network-based risk propagation (explicit, auditable business rule on top of the GNN score)
 - 📋 Investigator-oriented fraud dashboard
-- 📝 Drift-event audit logging
-- ⚙️ REST APIs for fraud scoring and investigation data
-- ☁️ Cloud deployment architecture
-- 📱 Flutter Web responsive frontend
-- 🐳 Dockerized Spring Boot backend deployment
+- 📝 Drift-event audit logging with retrain recommendations
+- ⚙️ REST APIs for fraud scoring, network data, drift reports, and audit history
+- ☁️ Independently deployable, cloud-hosted services (Render)
 
 ---
 
-# 🏗️ System Architecture
+## 🏗️ System Architecture
 
-```text
+```
                     ┌──────────────────────────┐
-                    │       Flutter Web        │
-                    │   Investigation Dashboard│
-                    └────────────┬─────────────┘
-                                 │
+                    │       Flutter Web         │
+                    │  Investigation Dashboard  │
+                    └────────────┬──────────────┘
                                  │ REST API
                                  ▼
                     ┌──────────────────────────┐
-                    │       Spring Boot        │
-                    │     Application API      │
-                    └────────────┬─────────────┘
-                                 │
+                    │        Spring Boot        │
+                    │      Application API      │
+                    └────────────┬──────────────┘
                                  │ REST
                                  ▼
                     ┌──────────────────────────┐
-                    │         FastAPI          │
-                    │       ML Service         │
-                    └────────────┬─────────────┘
+                    │          FastAPI          │
+                    │        ML Service         │
+                    └────────────┬──────────────┘
                                  │
               ┌──────────────────┼──────────────────┐
-              │                  │                  │
               ▼                  ▼                  ▼
        ┌─────────────┐    ┌─────────────┐    ┌──────────────┐
        │  GraphSAGE  │    │    Drift    │    │Explainability│
        │     GNN     │    │  Monitoring │    │   Signals    │
-       └──────┬──────┘    └─────────────┘    └──────────────┘
-              │
-              ▼
-       ┌──────────────────────┐
-       │ Transaction Network  │
-       │   Account Features   │
-       └──────────────────────┘
+       └─────────────┘    └─────────────┘    └──────────────┘
 ```
 
----
-
-# 🧩 System Components
-
-## 1. Flutter Web Frontend
-
-The frontend provides the investigator-facing interface.
-
-It includes:
-
-- Fraud intelligence dashboard
-- Risk-score visualization
-- Account-level investigation
-- Behavioral explanations
-- Transaction network visualization
-- Network filters
-- Drift monitoring alerts
-- Audit-log information
-
-The frontend communicates with the backend through REST APIs.
+**Why three separate services instead of one?** This mirrors how fintechs actually structure fraud systems: Java/Spring Boot owns business logic, orchestration, and auditability; the ML layer is an independently deployable, independently scalable microservice. It's not overengineering — it's the realistic shape of the problem.
 
 ---
 
-## 2. Spring Boot Backend
+## 🧩 System Components
 
-The Spring Boot application acts as the application/API layer between the frontend and the ML service.
+### 1. Flutter Web Frontend
+Investigator-facing interface: fraud dashboard, risk-score visualization, account investigation, behavioral explanations, transaction-network graph with filters, drift-monitoring alerts, and audit-log visibility.
 
-Responsibilities include:
+### 2. Spring Boot Backend
+The application/API layer between frontend and ML service. Exposes REST endpoints, calls the ML service, returns fraud predictions/drift reports/network data/audit logs, and **records drift events into an audit trail** — the retrain-trigger logic lives here. Independently deployable via Docker.
 
-- Exposing REST endpoints
-- Calling the ML service
-- Returning fraud predictions
-- Returning drift reports
-- Returning transaction-network data
-- Returning audit-log information
-- Recording relevant drift events
-
-The backend is independently deployable and uses Docker for production deployment.
+### 3. FastAPI ML Service
+Fraud prediction, GraphSAGE inference, feature processing, explainability, network data generation, and drift analysis. Deployed independently so the ML layer can be scaled and iterated on without touching the application layer.
 
 ---
 
-## 3. FastAPI ML Service
+## 🧠 Machine Learning Pipeline
 
-The FastAPI service provides the machine-learning functionality.
-
-Responsibilities include:
-
-- Fraud prediction
-- GraphSAGE inference
-- Account feature processing
-- Explainability
-- Network data generation
-- Drift analysis
-- Model monitoring
-- Risk-related ML outputs
-
-The ML service is independently deployed so that the machine-learning layer can be scaled and maintained separately from the application backend.
-
----
-
-# 🧠 Machine Learning Pipeline
-
-The ML pipeline transforms transaction-level data into **account-level behavioral features**.
-
-Important features include:
-
-```text
-in_degree
-out_degree
-unique_senders
-unique_receivers
-pass_through_ratio
-velocity_hours
-in_span_hours
-is_passthrough
-```
-
-These features capture behavioral characteristics associated with suspicious money movement.
-
-### Feature intuition
+Transaction-level data is transformed into account-level behavioral features:
 
 | Feature | What it captures |
 |---|---|
@@ -246,620 +155,195 @@ These features capture behavioral characteristics associated with suspicious mon
 | `unique_senders` | Number of distinct sending accounts |
 | `unique_receivers` | Number of distinct receiving accounts |
 | `pass_through_ratio` | How much received money is subsequently passed onward |
-| `velocity_hours` | Timing/velocity characteristics of transactions |
+| `velocity_hours` | Timing/velocity of transaction activity |
 | `in_span_hours` | Time span of incoming activity |
-| `is_passthrough` | Whether an account exhibits pass-through behavior |
+| `is_passthrough` | Whether an account is a pure 1-in-1-out chain link (topology signal, not fed to the model — used purely for monitoring) |
 
-These features are then used as node attributes within the transaction graph.
+## 🔗 Graph Neural Network
 
----
-
-# 🔗 Graph Neural Network
-
-The transaction dataset is represented as a graph.
-
-```text
-Nodes     → Accounts
-Edges     → Transactions
-Features  → Account behavioral statistics
+```
+Nodes    → Accounts
+Edges    → Transactions
+Features → Account behavioral statistics
 ```
 
-MuleShield uses **GraphSAGE** to learn representations from both:
+GraphSAGE learns representations from both an account's own behavioral features **and** the structure/features of its neighbors:
 
-1. The account's own behavioral features
-2. The structure and features of its neighboring accounts
-
-Simplified architecture:
-
-```text
-Account Features
-       │
-       ▼
- GraphSAGE Layer
-       │
-       ▼
-      ReLU
-       │
-       ▼
- GraphSAGE Layer
-       │
-       ▼
- Fraud Probability
-       │
-       ▼
-  Risk Score
+```
+Account Features → GraphSAGE Layer → ReLU → GraphSAGE Layer → Fraud Probability → Risk Score
 ```
 
-This allows the model to use both **local account behavior and transaction-network structure**.
+## 🚨 Risk Classification
 
----
-
-# 🚨 Risk Classification
-
-Model outputs are converted into account-level risk scores.
-
-The dashboard groups accounts into three categories:
-
-```text
-Risk Score >= 70
-        ↓
-      HIGH
-
-40 <= Risk Score < 70
-        ↓
-    UNCERTAIN
-
-Risk Score < 40
-        ↓
-      LOW
+```
+Risk Score >= 70   → HIGH
+40 <= Score < 70   → UNCERTAIN — escalate to human review
+Risk Score < 40    → LOW
 ```
 
-These categories help investigators prioritize accounts for further analysis.
+The middle band is deliberate: a model that silently forces every borderline score into "allow" or "block" is quietly overconfident. Real fraud/compliance systems need an explicit "I'm not sure" path.
 
----
+## 🔍 Explainability
 
-# 🔍 Explainability
+Every flagged account comes with a plain-language reason, not just a number:
 
-MuleShield does not expose only a numerical prediction.
-
-It also provides behavioral explanations associated with suspicious activity.
-
-Examples include:
-
-- Receiving funds from multiple senders
-- Forwarding funds shortly after receiving them
-- High pass-through activity
-- High percentage of received funds being forwarded
-- Multiple transactions occurring within a short time window
-- Sudden incoming activity without corresponding outbound history
-
-Example:
-
-```text
+```
 Risk Score: 87.4
 
 Why flagged:
-
 • received money from multiple senders
 • forwarded funds shortly after receiving them
 • passed through a high percentage of received funds
 ```
 
-This makes the system more useful for investigation than a raw probability alone.
+## 🕸️ Transaction Network Intelligence
 
----
+The network view lets investigators trace an account's incoming/outgoing transactions, connected accounts, and risk relationships, filterable by **All / High Risk / Mule / Outbound**.
 
-# 🕸️ Transaction Network Intelligence
+## 🔄 Risk Propagation
 
-The network view connects accounts through their transaction relationships.
-
-Investigators can explore:
-
-```text
-Account
-   │
-   ├── Incoming transactions
-   │
-   ├── Outgoing transactions
-   │
-   ├── Connected accounts
-   │
-   └── Risk relationships
+```
+High-Risk Account → Connected Account → Network Context → Additional Risk Signal
 ```
 
-The dashboard supports filtering by:
+If an account transacts directly with an already-flagged high-risk account, its own score is boosted — an explicit, auditable rule layered on top of the GNN's score, so the "risk spreads through the network" reasoning isn't buried inside model weights where a compliance officer can't inspect it.
 
-```text
-ALL
-HIGH RISK
-MULE
-STRUCTURED
-OUTBOUND
-```
+## 📈 Model Drift Monitoring
 
-The network view provides:
-
-- Account relationships
-- Transaction direction
-- Transaction amounts
-- Account risk levels
-- Suspicious clusters
-- Connected-account context
-- Selected-account investigation context
-
-This allows investigators to move from:
-
-```text
-"Which account is suspicious?"
-```
-
-to:
-
-```text
-"Which network of accounts is involved?"
-```
-
----
-
-# 🔄 Risk Propagation
-
-Fraudulent behavior can extend through transaction networks.
-
-MuleShield includes network-based risk propagation logic that considers relationships between suspicious accounts and connected accounts.
-
-Conceptually:
-
-```text
-High-Risk Account
-       │
-       ▼
-Connected Account
-       │
-       ▼
-Network Context
-       │
-       ▼
-Additional Risk Signal
-```
-
-Risk propagation provides an additional layer of network intelligence beyond the original GraphSAGE prediction.
-
-It is intended to help surface suspicious relationships that may not be obvious from an isolated account-level score.
-
----
-
-# 📈 Model Drift Monitoring
-
-Fraud patterns can change over time.
-
-A model that performs well on historical behavior may encounter a different distribution of transaction activity later.
-
-MuleShield therefore includes **model and feature drift monitoring**.
-
-The platform uses the **Population Stability Index (PSI)** to compare baseline and incoming distributions.
-
-Example monitoring output:
-
-```text
-Overall status: MAJOR_SHIFT
-
-Risk-score PSI: 0.045
-
-Most-drifted feature:
-is_passthrough
-PSI: 0.583
-```
-
-A significant feature shift can indicate that new transaction behavior has entered the system.
-
-The system also monitors explanation-pattern divergence using **Jensen-Shannon divergence (JS divergence)**.
-
----
-
-# 🧪 Adversarial Robustness Testing
-
-Fraudsters may intentionally modify their behavior to appear less suspicious.
-
-MuleShield therefore includes adversarial transaction simulation to evaluate whether the detection pipeline remains robust against evasion-oriented behavior.
-
-Workflow:
-
-```text
-Normal Data
-     │
-     ▼
-Adversarial Simulation
-     │
-     ▼
-Feature Generation
-     │
-     ▼
-Model Scoring
-     │
-     ▼
-Robustness Evaluation
-```
-
-This provides an additional evaluation layer beyond standard model testing.
-
-The objective is to test the system under deliberately altered fraud-like behavior rather than evaluating only clean historical patterns.
-
----
-
-# 📝 Audit & Monitoring
-
-MuleShield combines:
-
-```text
-Fraud Detection
-       +
-Drift Detection
-       +
-Audit Logging
-```
-
-When significant drift is detected, the backend can record the event.
-
-This creates an audit trail that can help investigators or engineers determine:
-
-- When a drift event occurred
-- What type of drift was observed
-- Which features were affected
-- Whether further investigation is required
-- Whether model retraining should be considered
-
----
-
-# 🔄 End-to-End Investigation Flow
-
-A typical investigation can follow this workflow:
-
-```text
-                ┌─────────────────┐
-                │  Fraud Report   │
-                └────────┬────────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ Identify Risky  │
-                │    Accounts     │
-                └────────┬────────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ Review Reasons  │
-                │   for Risk      │
-                └────────┬────────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ Open Network    │
-                │    View         │
-                └────────┬────────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ Trace Connected  │
-                │    Accounts     │
-                └────────┬────────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ Review Network  │
-                │ Risk Propagation│
-                └────────┬────────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ Check Model/Data│
-                │     Drift       │
-                └─────────────────┘
-```
-
----
-
-# 🛠️ Technology Stack
-
-## Frontend
-
-- Flutter
-- Dart
-- Material UI
-- GraphView
-- REST API integration
-
-## Backend
-
-- Java
-- Spring Boot
-- Spring Web
-- Maven
-- REST APIs
-
-## Machine Learning
-
-- Python
-- FastAPI
-- PyTorch
-- PyTorch Geometric
-- GraphSAGE
-- Pandas
-- NumPy
-- Scikit-learn
-- SciPy
-
-## Deployment
-
-- GitHub
-- Render
-- Docker
-- Flutter Web
-
----
-
-# 📡 API Endpoints
-
-## Fraud Report
-
-```http
-GET /api/fraud-report
-```
-
-Returns account-level fraud predictions and behavioral explanations.
-
----
-
-## Drift Report
-
-```http
-GET /api/drift-report
-```
-
-Returns:
-
-- Overall drift status
-- Risk-score PSI
-- Feature PSI
-- Explanation divergence
-- Drift alerts
-- Summary information
-
-Example:
+Fraud patterns change over time. MuleShield uses **PSI** (Population Stability Index) to compare baseline vs. incoming feature/score distributions, and **Jensen-Shannon divergence** to check whether the *kind* of explanation the model gives is shifting.
 
 ```json
 {
   "overall_status": "major_shift",
-  "score_psi": 0.04504380869345427,
+  "score_psi": 0.045,
   "feature_psi": {
-    "in_degree": 0.05194713329452505,
-    "out_degree": 0.06552895270702973,
-    "unique_senders": 0.04489214081788862,
-    "unique_receivers": 0.08457825725441973,
-    "pass_through_ratio": 0.041574160574492786,
-    "velocity_hours": 0.05921611504823506,
-    "in_span_hours": 0.04637897959173011,
-    "is_passthrough": 0.5830799852834774
+    "is_passthrough": 0.583
   },
-  "explanation_js_divergence": 0.0057590339522558456
+  "explanation_js_divergence": 0.0057
 }
 ```
 
-A high PSI value on an individual feature can trigger a drift alert.
+**The honest finding:** the risk-score distribution alone looked stable (PSI 0.045) even while a real fraud pattern was slipping through — because the drifted subgroup was a small fraction of total traffic, diluting the aggregate signal. Only the feature-level `is_passthrough` check caught it. This is why the system monitors multiple layers, not just the final score.
 
----
+## 🧪 Adversarial Robustness Testing
 
-## Transaction Network
+To check whether the monitoring actually generalizes (rather than being overfit to one test case), MuleShield includes a red-team step: a synthetic fraud pattern was built specifically to **evade** the `is_passthrough` check by splitting each hop's outbound transfer in two.
 
-```http
-GET /api/network
+```
+Normal Data → Adversarial Simulation → Feature Generation → Model Scoring → Robustness Evaluation
 ```
 
-Returns network information including:
+Result: the evasion attempt still leaked signal at the final cash-out hop, so `is_passthrough` still fired (PSI = 0.975) — and after retraining, the GNN's own recall on this batch rose from 67.1% to 100% (see [Results](#-results--key-findings)).
 
-- Network nodes
-- Account IDs
-- Risk scores
-- Risk levels
-- Account types
-- Transaction edges
-- Transaction amounts
+## 📝 Audit & Retrain Trigger
+
+When significant drift is detected, the backend logs an audit entry: timestamp, model version, drift metrics, and a plain-language recommendation (e.g. *"RETRAIN RECOMMENDED"*), with a `pending_review` status until a human acts on it. This is the compliance-facing half of the story — the kind of documented risk-management trail regulators (e.g. under the EU AI Act's high-risk-AI provisions) actually ask for.
 
 ---
 
-## Audit Log
+## 🔄 End-to-End Investigation Flow
 
-```http
-GET /api/audit-log
+```
+Fraud Report → Identify Risky Accounts → Review Reasons for Risk
+    → Open Network View → Trace Connected Accounts
+    → Review Network Risk Propagation → Check Model/Data Drift
 ```
 
-Returns recorded drift-related audit events.
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Tech |
+|---|---|
+| Frontend | Flutter, Dart, Material UI, GraphView |
+| Backend | Java, Spring Boot, Maven, REST |
+| ML | Python, FastAPI, PyTorch, PyTorch Geometric (GraphSAGE), Pandas, NumPy, Scikit-learn, SciPy |
+| Deployment | GitHub, Render, Docker |
 
 ---
 
-# 📁 Project Structure
+## 📡 API Endpoints
 
-```text
+| Endpoint | Returns |
+|---|---|
+| `GET /api/fraud-report` | Account-level fraud predictions + behavioral explanations |
+| `GET /api/drift-report` | Overall drift status, score PSI, feature PSI, explanation divergence, alerts |
+| `GET /api/network` | Network nodes, risk scores/levels, account types, transaction edges |
+| `GET /api/audit-log` | Recorded drift-related audit events and retrain recommendations |
+
+---
+
+## 📁 Project Structure
+
+```
 mule-fraud-detection/
+├── backend/                    # Spring Boot application (Java)
+├── frontend/                   # Flutter Web dashboard
 │
-├── backend/
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       │   └── com/
-│   │       │       └── fraudplatform/
-│   │       │           └── backend/
-│   │       └── resources/
-│   ├── pom.xml
-│   ├── mvnw
-│   └── Dockerfile
+├── fastapi_app.py              # ML service entrypoint
+├── drift_monitor.py            # PSI / JS-divergence drift detection
+├── risk_propagation.py         # Network-based risk boosting
+├── risk_classification.py      # Allow / Uncertain / Block decision bands
+├── explain.py                  # Rule-based explainability
 │
-├── frontend/
-│   ├── lib/
-│   │   ├── models/
-│   │   ├── screens/
-│   │   ├── services/
-│   │   └── widgets/
-│   ├── pubspec.yaml
-│   └── test/
+├── train_baseline.py           # XGBoost baseline
+├── train_gnn.py                # GraphSAGE v1
+├── retrain_gnn_v2.py           # GraphSAGE v2 (retrained on combined data)
 │
-├── fastapi_app.py
-├── drift_monitor.py
-├── risk_propagation.py
-├── explain.py
+├── build_features.py / build_drift_features.py / build_adversarial_features.py
+├── simulate_data.py / simulate_drift_batch.py / simulate_adversarial_batch.py
+├── combine_training_data.py    # Merges baseline + structuring for retraining
 │
-├── train_baseline.py
-├── train_gnn.py
-├── retrain_gnn_v2.py
+├── run_drift_check.py / run_adversarial_drift_check.py
+├── score_current_batch.py / score_adversarial_batch.py / score_adversarial_with_v2.py
 │
-├── build_features.py
-├── build_drift_features.py
-├── build_adversarial_features.py
-├── add_topology_feature.py
-│
-├── simulate_data.py
-├── simulate_drift_batch.py
-├── simulate_adversarial_batch.py
-│
-├── run_drift_check.py
-├── run_adversarial_drift_check.py
-│
-├── score_current_batch.py
-├── score_adversarial_batch.py
-├── score_adversarial_with_v2.py
-│
-├── combine_training_data.py
 ├── requirements.txt
 ├── Procfile
-├── .gitignore
-└── README.md
+└── .gitignore
 ```
 
-Generated datasets and model artifacts are intentionally excluded from version control where appropriate through `.gitignore`.
+Generated datasets and model artifacts are excluded from version control where appropriate via `.gitignore`, and are fully reproducible from the `simulate_*.py` / `build_*.py` scripts.
 
 ---
 
-# ⚙️ Local Setup
+## ⚙️ Local Setup
 
-## Prerequisites
+**Prerequisites:** Python 3.x, Java 17+, Maven, Flutter SDK, Git
 
-Install:
-
-- Python 3.x
-- Java 17+
-- Maven
-- Flutter SDK
-- Git
-
----
-
-# 🤖 Run the ML Service
-
-Create and activate a virtual environment:
-
-### Windows
-
-```cmd
+### ML Service
+```bash
 python -m venv venv
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```cmd
+venv\Scripts\activate          # Windows
 pip install -r requirements.txt
-```
-
-Run the FastAPI service:
-
-```cmd
 uvicorn fastapi_app:app --host 0.0.0.0 --port 8000
 ```
+→ `http://localhost:8000`
 
-The ML service will be available at:
-
-```text
-http://localhost:8000
-```
-
----
-
-# ☕ Run the Spring Boot Backend
-
-Navigate to the backend:
-
-```cmd
+### Spring Boot Backend
+```bash
 cd backend
-```
-
-Build the application:
-
-```cmd
 mvnw clean package -DskipTests
-```
-
-Run the generated JAR:
-
-```cmd
 java -jar target/backend-0.0.1-SNAPSHOT.jar
 ```
+→ `http://localhost:8080`
 
-The backend runs on:
-
-```text
-http://localhost:8080
-```
-
----
-
-# 📱 Run the Flutter Frontend
-
-Navigate to the frontend:
-
-```cmd
+### Flutter Frontend
+```bash
 cd frontend
-```
-
-Install Flutter dependencies:
-
-```cmd
 flutter pub get
-```
-
-Run locally:
-
-```cmd
 flutter run -d chrome
 ```
 
----
-
-# 🔌 API Configuration
-
-The Flutter frontend supports configurable API endpoints using:
-
-```text
-API_BASE_URL
-```
-
-Example:
-
-```cmd
+### Configurable API endpoint
+```bash
 flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8080
-```
-
-For a deployed backend:
-
-```cmd
+# or, pointed at a deployed backend:
 flutter run -d chrome --dart-define=API_BASE_URL=https://your-backend-url
 ```
 
-This keeps deployment-specific URLs outside the application source code.
-
 ---
 
-# 🐳 Docker Deployment
-
-The Spring Boot backend includes a Dockerfile based on Eclipse Temurin Java 17.
+## 🐳 Docker Deployment
 
 ```dockerfile
 FROM eclipse-temurin:17-jdk
@@ -871,227 +355,36 @@ EXPOSE 8080
 CMD ["java", "-jar", "target/backend-0.0.1-SNAPSHOT.jar"]
 ```
 
-The application listens on port `8080`.
+The ML service and Spring Boot backend are deployed as independent services (Render), keeping ML iteration decoupled from the application layer.
 
 ---
 
-# ☁️ Deployment Architecture
+## 📸 Screenshots
 
-The project is designed as independently deployable services:
+*(add 2-3 screenshots here before sharing — dashboard overview, account detail view, and the network graph make the strongest first impression)*
 
-```text
-                    Internet
-                       │
-                       ▼
-              ┌─────────────────┐
-              │  Flutter Web UI  │
-              └────────┬────────┘
-                       │
-                       ▼
-              ┌─────────────────┐
-              │ Spring Boot API │
-              └────────┬────────┘
-                       │
-                       ▼
-              ┌─────────────────┐
-              │ FastAPI ML API  │
-              └─────────────────┘
 ```
-
-The ML service is deployed independently from the Spring Boot application.
-
-This separation allows:
-
-- Independent service deployment
-- Clear API boundaries
-- Easier ML iteration
-- Independent scaling
-- Cleaner frontend/backend architecture
+![Dashboard](docs/screenshots/dashboard.png)
+![Network Graph](docs/screenshots/network.png)
+![Account Investigation](docs/screenshots/account-detail.png)
+```
 
 ---
 
-# 🔐 Configuration
+## 🚀 Future Improvements
 
-Deployment-specific configuration is handled using environment variables where appropriate.
-
-Example:
-
-```text
-ML_SERVICE_URL=https://mule-fraud-ml.onrender.com
-```
-
-The frontend similarly supports:
-
-```text
-API_BASE_URL
-```
-
-This avoids hard-coding environment-specific service locations into application logic.
-
----
-
-# 🧪 Model Evaluation & Robustness
-
-The project includes multiple layers of evaluation:
-
-```text
-                 Model Evaluation
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-   Normal Data   Adversarial Data   Drift Data
-        │              │              │
-        ▼              ▼              ▼
-    Prediction     Robustness       Distribution
-     Testing        Testing           Analysis
-```
-
-This is intended to provide a broader assessment of the fraud-detection pipeline than a single accuracy metric.
-
----
-
-# 📊 Example Drift Finding
-
-One observed monitoring scenario produced:
-
-```text
-Overall status: MAJOR_SHIFT
-
-Risk-score PSI: 0.045
-
-is_passthrough PSI: 0.583
-
-Explanation JS divergence: 0.006
-```
-
-The key signal was the substantial distribution shift in:
-
-```text
-is_passthrough
-```
-
-while the overall risk-score distribution remained comparatively stable.
-
-This illustrates why monitoring individual input features can reveal changes that may not immediately appear in the final model-score distribution.
-
----
-
-# 🎯 Why This Project Matters
-
-Mule fraud is fundamentally a **network problem**.
-
-A single suspicious transaction may not provide enough evidence.
-
-However:
-
-```text
-Multiple Senders
-       │
-       ▼
-  Mule Account
-       │
-       ├──────────► Receiver A
-       │
-       ├──────────► Receiver B
-       │
-       └──────────► Receiver C
-```
-
-can reveal a much stronger behavioral pattern.
-
-MuleShield therefore combines:
-
-```text
-Account Behavior
-       +
-Graph Structure
-       +
-Transaction Relationships
-       +
-Explainability
-       +
-Risk Propagation
-       +
-Continuous Monitoring
-```
-
-to create an investigation-oriented fraud intelligence system.
-
----
-
-# 🚀 Future Improvements
-
-Potential future extensions include:
-
-- Real-time transaction-stream processing
-- Larger production-scale transaction graphs
-- Real-time GraphSAGE inference
-- Automated model retraining pipelines
-- Stronger adversarial evaluation
-- Investigator feedback loops
-- Case-management workflows
-- Historical investigation replay
-- Advanced graph analytics
-- Model performance monitoring
-- Human-in-the-loop fraud review
+- Real-time transaction-stream processing (rolling-window drift checks instead of batch)
+- Automated model retraining pipeline (currently a manual, validated step by design)
+- Case-management workflow for investigators
+- Human-in-the-loop feedback loop back into the training data
 - Production database integration
 
 ---
 
-# 🏆 Project Summary
+## 📌 Disclaimer
 
-MuleShield is designed as more than a machine-learning classifier.
-
-It combines:
-
-```text
-                 ┌─────────────────────┐
-                 │   Fraud Detection   │
-                 └──────────┬──────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │ Network Intelligence│
-                 └──────────┬──────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │   Explainability    │
-                 └──────────┬──────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │  Risk Propagation   │
-                 └──────────┬──────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │ Adversarial Testing │
-                 └──────────┬──────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │  Drift Monitoring   │
-                 └──────────┬──────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │ Investigator UI     │
-                 └─────────────────────┘
-```
-
-The central idea is simple:
-
-> **Don't just detect the suspicious account. Understand the network, explain the behavior, and monitor how the fraud pattern evolves.**
+This project is a technical demonstration and research-oriented fraud intelligence platform. It is not intended to make autonomous real-world financial decisions without appropriate validation, governance, human review, regulatory controls, and production-grade security.
 
 ---
 
-# 📌 Disclaimer
-
-This project is a technical demonstration and research-oriented fraud intelligence platform.
-
-It is not intended to make autonomous real-world financial decisions without appropriate validation, governance, human review, regulatory controls, and production-grade security.
-
----
-
-# 👨‍💻 Project
-
-**MuleShield — AI-Powered Mule Fraud Detection & Network Intelligence Platform**
-
-Built with:
-
-**Flutter • Java • Spring Boot • Python • FastAPI • PyTorch • PyTorch Geometric • GraphSAGE • Docker • Render**
+**MuleShield** — Built with Flutter • Java • Spring Boot • Python • FastAPI • PyTorch Geometric • GraphSAGE • Docker • Render
