@@ -27,6 +27,35 @@ GET https://mule-fraud-ml.onrender.com
   "mode": "production"
 }
 ```
+## 📸 Platform Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="./docs/screenshots/dashboard.png" alt="Fraud Intelligence Dashboard" width="500"/>
+    </td>
+    <td align="center">
+      <img src="./docs/screenshots/network.png" alt="Transaction Network Graph" width="500"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>Fraud Intelligence Dashboard</b></td>
+    <td align="center"><b>Transaction Network Intelligence</b></td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="./docs/screenshots/account-investigation.png" alt="Account Investigation Panel" width="500"/>
+    </td>
+    <td align="center">
+      <img src="./docs/screenshots/drift-report.png" alt="Drift Monitoring Report" width="500"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>Account Investigation</b></td>
+    <td align="center"><b>Model Drift Monitoring</b></td>
+  </tr>
+</table>
 
 ---
 
@@ -359,35 +388,6 @@ The ML service and Spring Boot backend are deployed as independent services (Ren
 
 ---
 
-## 📸 Platform Screenshots
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="./assets/screenshots/dashboard.png" alt="Fraud Intelligence Dashboard" width="500"/>
-    </td>
-    <td align="center">
-      <img src="./assets/screenshots/network.png" alt="Transaction Network Graph" width="500"/>
-    </td>
-  </tr>
-  <tr>
-    <td align="center"><b>Fraud Intelligence Dashboard</b></td>
-    <td align="center"><b>Transaction Network Intelligence</b></td>
-  </tr>
-
-  <tr>
-    <td align="center">
-      <img src="./assets/screenshots/account.png" alt="Account Investigation Panel" width="500"/>
-    </td>
-    <td align="center">
-      <img src="./assets/screenshots/drift.png" alt="Drift Monitoring Report" width="500"/>
-    </td>
-  </tr>
-  <tr>
-    <td align="center"><b>Account Investigation</b></td>
-    <td align="center"><b>Model Drift Monitoring</b></td>
-  </tr>
-</table>
 ---
 
 ## 🚀 Future Improvements
