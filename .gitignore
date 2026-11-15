@@ -30,4 +30,9 @@ gnn_model_v2.pt
 
 # OS
 .DS_Store
-Thumbs.db
+Thumbs.dbdata/
+fraud.json
+network.json
+drift.json
+audit.json
+fastapi_app_changes.patch
