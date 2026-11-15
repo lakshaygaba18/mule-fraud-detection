@@ -20,9 +20,11 @@ def list_flagged_accounts(limit: int = 10, min_score: float = 70.0) -> dict:
 def investigate_account(account_id: str) -> dict:
     """Investigate one account for possible mule activity. Returns the model's
     risk score and level, behavioural statistics, evidence computed from the
-    raw transactions, and caveats. A high score is a signal for human review,
-    not proof of fraud. Account ID prefixes (MULE_, OUT_, SRC_) come from the
-    simulator and must NOT be treated as evidence."""
+    raw transactions, a reliability section (including drift status) and
+    caveats. A high score is a signal for human review, not proof of fraud.
+    Account ID prefixes (MULE_, OUT_, SRC_) come from the simulator and must
+    NOT be treated as evidence. is_single_in_single_out_relay is a narrow
+    pattern; False does not mean the account is clean."""
     return data.investigate_account(account_id)
 
 
@@ -32,6 +34,23 @@ def trace_transactions(account_id: str, direction: str = "out", depth: int = 2) 
     'in' (where it came from) or 'both'. depth is the number of hops (1-4).
     Each transaction includes amount, timestamp and the counterparty's risk level."""
     return data.trace_transactions(account_id, direction, depth)
+
+
+@mcp.tool()
+def get_network_graph(account_id: str, radius: int = 1, max_nodes: int = 30) -> dict:
+    """Return the local transaction network around an account: nodes with risk
+    levels and aggregated payment edges between them. radius is 1 or 2 hops.
+    Check summary.truncated before drawing conclusions about the whole network."""
+    return data.get_network_graph(account_id, radius, max_nodes)
+
+
+@mcp.tool()
+def get_drift_report() -> dict:
+    """Return the model drift report: how much the current batch of accounts
+    differs from the training baseline (PSI per feature and for the risk score).
+    Read the limitations field: feature drift does not catch every kind of
+    model failure."""
+    return data.get_drift_report()
 
 
 if __name__ == "__main__":
