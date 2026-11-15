@@ -888,6 +888,7 @@ The ML service and Spring Boot backend are deployed as independent services, kee
 
 ## 🔄 Future Improvements
 
+
 - Real-time transaction-stream processing with rolling-window drift checks.
 - Automated model retraining pipeline with validation and approval.
 - Investigator case-management workflow.
@@ -895,6 +896,27 @@ The ML service and Spring Boot backend are deployed as independent services, kee
 - Production database integration.
 - Expanded monitoring and model-performance evaluation.
 - More extensive MCP integration and investigation workflows.
+
+---
+
+## 📸 Screenshots
+
+**Fraud Intelligence Dashboard** — live drift alert banner, account list sorted by risk score, with plain-language reasons for every flag.
+
+![Dashboard](https://github.com/user-attachments/assets/64bceaa8-be2a-43b1-9446-6f027f8ca872)
+
+**Transaction Network Graph** — interactive, filterable (All / High Risk / Mule / Outbound) live topology of the account graph.
+
+![Network Graph](https://github.com/user-attachments/assets/ed96f904-c8d8-4f2d-a3ef-da2b6b4f6fbc)
+
+**Account Investigation Panel** — click any node to see its risk score, account type, transaction volumes, and network connections.
+
+![Account Investigation](https://github.com/user-attachments/assets/640ae973-c3ec-4321-b10e-2b7fdc29139b)
+
+**Drift Monitoring Report** — per-feature PSI breakdown, showing `is_passthrough` catching a shift that the aggregate risk-score PSI missed.
+
+![Drift Report](https://github.com/user-attachments/assets/80356841-3f7a-43b5-b989-6165c0ac2aca)
+
 
 ---
 
