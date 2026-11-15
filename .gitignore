@@ -1,3 +1,4 @@
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,13 +17,21 @@ frontend/.packages
 backend/target/
 
 # Generated datasets / reports
+data/
 combined_account_features.csv
 combined_transactions.csv
 account_risk_report_propagated.csv
 adversarial_account_risk_report_v2.csv
+fraud.json
+network.json
+drift.json
+audit.json
 
 # Local model artifacts
 gnn_model_v2.pt
+
+# Temporary files
+fastapi_app_changes.patch
 
 # IDE
 .vscode/
@@ -30,9 +39,4 @@ gnn_model_v2.pt
 
 # OS
 .DS_Store
-Thumbs.dbdata/
-fraud.json
-network.json
-drift.json
-audit.json
-fastapi_app_changes.patch
+Thumbs.db
